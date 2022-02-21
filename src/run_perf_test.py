@@ -48,11 +48,6 @@ def main():
     location = os.path.join(tests_dir, "perf-test")
     os.makedirs(location, exist_ok=True)
 
-    path = os.path.join(location, "perf-test-results.txt")
-    file = open(path, "w")
-    file.write("Test Data")
-    file.close()
-
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         current_workspace = os.path.join(work_dir.name, "infra")
         with GitRepository(get_infra_repo_url(), "perf-test-fix", current_workspace):
@@ -61,7 +56,8 @@ def main():
             with WorkingDirectory(current_workspace):
                 with PerfTestCluster.create(manifest, config, args.stack, security, current_workspace) as (test_cluster_endpoint, test_cluster_port):
                     time.sleep(300)
-                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace)
+                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace,
+                                                    test_results_path=location)
                     perf_test_suite.execute()
 
 
