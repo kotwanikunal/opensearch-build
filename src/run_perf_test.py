@@ -47,6 +47,7 @@ def main():
     os.makedirs(tests_dir, exist_ok=True)
     location = os.path.join(tests_dir, "perf-test")
     os.makedirs(location, exist_ok=True)
+    location_str = str(location)
 
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         current_workspace = os.path.join(work_dir.name, "infra")
@@ -57,7 +58,7 @@ def main():
                 with PerfTestCluster.create(manifest, config, args.stack, security, current_workspace) as (test_cluster_endpoint, test_cluster_port):
                     time.sleep(120)
                     perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace,
-                                                    test_results_path=str(location))
+                                                    location_str)
                     perf_test_suite.execute()
 
 
