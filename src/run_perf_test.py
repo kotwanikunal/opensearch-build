@@ -55,9 +55,9 @@ def main():
             security = "security" in manifest.components
             with WorkingDirectory(current_workspace):
                 with PerfTestCluster.create(manifest, config, args.stack, security, current_workspace) as (test_cluster_endpoint, test_cluster_port):
-                    time.sleep(300)
+                    time.sleep(120)
                     perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace,
-                                                    test_results_path=location)
+                                                    test_results_path=str(location))
                     perf_test_suite.execute()
 
 
