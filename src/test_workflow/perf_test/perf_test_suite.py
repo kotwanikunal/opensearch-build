@@ -20,11 +20,11 @@ class PerfTestSuite:
             f" -a {self.manifest.build.architecture} -p {self.current_workspace}"
         )
 
-        if test_results_path is not None:
-            self.command = (
-                f"pipenv run python test_config.py -i {self.endpoint} -b {self.manifest.build.id}"
-                f" -a {self.manifest.build.architecture} -p {test_results_path}"
-            )
+        # if test_results_path is not None:
+        #     self.command = (
+        #         f"pipenv run python test_config.py -i {self.endpoint} -b {self.manifest.build.id}"
+        #         f" -a {self.manifest.build.architecture} -p {test_results_path}"
+        #     )
 
         print(self.command)
 
