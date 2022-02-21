@@ -5,7 +5,7 @@ pipeline {
     environment {
         AWS_ROLE_ARN = "arn:aws:iam::${AWS_ACCOUNT_PUBLIC}:role/opensearch-test"
         AWS_ROLE_SESSION_NAME = "jenkins-test-session"
-        BUILD_MANIFEST = "build-manifest.yml"
+        BUNDLE_MANIFEST = "bundle-manifest.yml"
     }
     tools {
         jdk "JDK14"
@@ -20,8 +20,8 @@ pipeline {
         )
         string(
             defaultValue: '',
-            name: 'BUILD_MANIFEST_URL',
-            description: 'The build manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
+            name: 'BUNDLE_MANIFEST_URL',
+            description: 'The bundle manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
             trim: true
         )
         string(
@@ -31,6 +31,7 @@ pipeline {
             trim: true
         )
     }
+
     stages {
         stage('perf-test') {
             agent {
@@ -40,18 +41,30 @@ pipeline {
             }
             steps {
                 script {
-                    def buildManifestObj = downloadBuildManifest(
-                        url: BUILD_MANIFEST_URL,
-                        path: BUILD_MANIFEST
+                    def bundleManifestObj = downloadBuildManifest(
+                        url: BUNDLE_MANIFEST_URL,
+                        path: BUNDLE_MANIFEST
                     )
-                    String buildId = buildManifestObj.getArtifactBuildId()
+                    String buildId = bundleManifestObj.getArtifactBuildId()
                     env.BUILD_ID = buildId
-                    echo "BUILD_MANIFEST: ${BUILD_MANIFEST}"
+                    echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
                     echo "BUILD_ID: ${BUILD_ID}"
 
-                    runPerfTestScript(buildManifest: "${BUILD_MANIFEST}",
+                    runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
                         buildId: "${BUILD_ID}")
+                }
+            }
 
+            post {
+                always {
+                    script {
+                        uploadTestResults(
+                                buildManifestFileName: "${BUNDLE_MANIFEST}",
+                                jobName: 'perf-test',
+                                buildNumber: "${BUILD_ID}"
+                        )
+                    }
+                    cleanWs disableDeferredWipeout: true, deleteDirs: true
                 }
             }
         }

@@ -1,7 +1,7 @@
 void call(Map args = [:]) {
     String jobName = args.jobName ?: 'distribution-build-opensearch'
     lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
-    def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.buildManifest))
+    def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.bundleManifest))
     String artifactRootUrl = buildManifest.getArtifactRootUrl(jobName, args.buildId)
 
     install_npm()
@@ -15,7 +15,7 @@ void call(Map args = [:]) {
         './test.sh',
         'perf-test',
         "--stack test-single-disabled-${args.buildId}",
-        "--bundle-manifest ${args.buildManifest}",
+        "--bundle-manifest ${args.bundleManifest}",
         "--config config.yml"
 
     ].join(' '))
