@@ -43,6 +43,16 @@ def main():
     manifest = BundleManifest.from_file(args.bundle_manifest)
     config = yaml.safe_load(args.config)
 
+    tests_dir = os.path.join(os.getcwd(), "test-results")
+    os.makedirs(tests_dir, exist_ok=True)
+    location = os.path.join(tests_dir, "perf-test")
+    os.makedirs(location, exist_ok=True)
+
+    path = os.path.join(location, "perf-test-results.txt")
+    file = open(path, "w")
+    file.write("Test Data")
+    file.close()
+
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         current_workspace = os.path.join(work_dir.name, "infra")
         with GitRepository(get_infra_repo_url(), "perf-test-fix", current_workspace):
