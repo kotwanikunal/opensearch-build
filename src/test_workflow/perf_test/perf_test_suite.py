@@ -9,7 +9,7 @@ class PerfTestSuite:
     Represents a performance test suite. This class runs rally test on the deployed cluster with the provided IP.
     """
 
-    def __init__(self, bundle_manifest, endpoint, security, current_workspace, test_results_path):
+    def __init__(self, bundle_manifest, endpoint, security, current_workspace):
         self.manifest = bundle_manifest
         self.work_dir = "mensor/"
         self.endpoint = endpoint
