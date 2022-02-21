@@ -17,7 +17,7 @@ class PerfTestSuite:
         self.current_workspace = current_workspace
         self.command = (
             f"pipenv run python test_config.py -i {self.endpoint} -b {self.manifest.build.id}"
-            f" -a {self.manifest.build.architecture} -p {self.current_workspace}/test-results"
+            f" -a {self.manifest.build.architecture} -p {self.current_workspace}"
         )
 
         if test_results_path is not None:
