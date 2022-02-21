@@ -58,7 +58,8 @@ def main():
                 with PerfTestCluster.create(manifest, config, args.stack, security, current_workspace) \
                         as (test_cluster_endpoint, test_cluster_port):
                     time.sleep(120)
-                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace)
+                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace,
+                                                    location_str)
                     perf_test_suite.execute()
 
 
