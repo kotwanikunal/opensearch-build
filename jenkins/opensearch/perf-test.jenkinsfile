@@ -30,6 +30,24 @@ pipeline {
             description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
             trim: true
         )
+        string(
+            defaultValue: '',
+            name: 'TEST_WORKLOAD',
+            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'TEST_ITERATIONS',
+            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+            trim: true
+        )
+        string(
+            defaultValue: '',
+            name: 'WARMUP_ITERATIONS',
+            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+            trim: true
+        )
     }
 
     stages {
