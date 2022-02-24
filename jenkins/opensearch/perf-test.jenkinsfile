@@ -70,19 +70,19 @@ pipeline {
                     echo "BUILD_ID: ${BUILD_ID}"
                     echo "Security": ${SECURITY}
 
-//                     runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
-//                         buildId: "${BUILD_ID}")
+                    runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
+                        buildId: "${BUILD_ID}")
                 }
             }
 
             post {
                 always {
                     script {
-//                         uploadTestResults(
-//                                 buildManifestFileName: "${BUNDLE_MANIFEST}",
-//                                 jobName: 'perf-test',
-//                                 buildNumber: "${BUILD_ID}"
-//                         )
+                        uploadTestResults(
+                                buildManifestFileName: "${BUNDLE_MANIFEST}",
+                                jobName: 'perf-test',
+                                buildNumber: "${BUILD_ID}"
+                        )
                     }
                     cleanWs disableDeferredWipeout: true, deleteDirs: true
                 }

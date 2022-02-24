@@ -1,8 +1,6 @@
 import os
 import subprocess
 
-from system.working_directory import WorkingDirectory
-
 
 class PerfTestSuite:
     """
