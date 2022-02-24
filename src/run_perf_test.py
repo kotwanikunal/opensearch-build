@@ -9,7 +9,6 @@
 import argparse
 import os
 import sys
-import subprocess
 import time
 
 import yaml
@@ -37,6 +36,9 @@ def main():
     parser.add_argument("--bundle-manifest", type=argparse.FileType("r"), help="Bundle Manifest file.", required=True)
     parser.add_argument("--stack", dest="stack", help="Stack name for performance test")
     parser.add_argument("--config", type=argparse.FileType("r"), help="Config file.", required=True)
+    parser.add_argument("--security", dest="security", action="store_true",
+                        help="Security of the cluster should be True/False",
+                        default=False)
     parser.add_argument("--keep", dest="keep", action="store_true", help="Do not delete the working temporary directory.")
     args = parser.parse_args()
 
@@ -52,13 +54,11 @@ def main():
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         current_workspace = os.path.join(work_dir.name, "infra")
         with GitRepository(get_infra_repo_url(), "perf-test-fix", current_workspace):
-            subprocess.check_call("ls -al", cwd=current_workspace, shell=True)
-            security = "security" in manifest.components
             with WorkingDirectory(current_workspace):
-                with PerfTestCluster.create(manifest, config, args.stack, security, current_workspace) \
+                with PerfTestCluster.create(manifest, config, args.stack, args.security, current_workspace) \
                         as (test_cluster_endpoint, test_cluster_port):
                     time.sleep(120)
-                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, security, current_workspace,
+                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, args.security, current_workspace,
                                                     location_str)
                     perf_test_suite.execute()
 

@@ -65,18 +65,26 @@ pipeline {
                     )
                     String buildId = bundleManifestObj.getArtifactBuildId()
                     env.BUILD_ID = buildId
-                    env.SECURITY = bundleManifestObj.components.containsKey("security")
+                    env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
                     echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
                     echo "BUILD_ID: ${BUILD_ID}"
-                    echo "Security": ${SECURITY}
+                    echo "Security: ${HAS_SECURITY}"
 
                     runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
-                        buildId: "${BUILD_ID}")
+                        buildId: "${BUILD_ID}",
+                        security: false)
+
+                    if(env.HAS_SECURITY) {
+                     runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
+                        buildId: "${BUILD_ID}",
+                        security: true)
+                    }
+
                 }
             }
 
             post {
-                always {
+                success {
                     script {
                         uploadTestResults(
                                 buildManifestFileName: "${BUNDLE_MANIFEST}",

@@ -11,14 +11,15 @@ void call(Map args = [:]) {
         s3Download(file: "config.yml", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${PERF_TEST_CONFIG_LOCATION}/config.yml", force: true)
     }
 
-//     sh([
-//         './test.sh',
-//         'perf-test',
-//         "--stack test-single-disabled-${args.buildId}",
-//         "--bundle-manifest ${args.bundleManifest}",
-//         "--config config.yml"
-//
-//     ].join(' '))
+    sh([
+        './test.sh',
+        'perf-test',
+        args.security ? "--stack test-single-security-${args.buildId}" :
+        "--stack test-single-${args.buildId}",
+        "--bundle-manifest ${args.bundleManifest}",
+        "--config config.yml",
+        args.security ? "--security" : ""
+    ].join(' '))
 }
 
 void install_opensearch_infra_dependencies() {
