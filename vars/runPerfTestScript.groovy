@@ -41,7 +41,7 @@ void install_npm(){
 
 void install_dependencies() {
     sh '''
-        sudo npm ci
+        sudo npm uninstall -g chalk
         sudo npm install -g aws-cdk
         sudo npm install -g fs-extra
         sudo npm install -g chalk@4.1.2
