@@ -42,6 +42,8 @@ void install_npm(){
 void install_dependencies() {
     sh '''
         sudo npm uninstall -g chalk
+        sudo npm uninstall -g aws-cdk
+        sudo npm uninstall -g cdk-assume-role-credential-plugin
         sudo npm install -g aws-cdk
         sudo npm install -g fs-extra
         sudo npm install -g chalk@4.1.2
