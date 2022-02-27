@@ -50,6 +50,7 @@ void install_dependencies() {
         sudo npm install -g aws-cdk@1.142.0
         sudo npm install -g cdk-assume-role-credential-plugin@1.4.0
         sudo npm install -g chalk@4.1.2
+        sudo npm install @aws-cdk/cloudformation-diff
         sudo npm install -g fs-extra
         sudo npm list -g
     '''
