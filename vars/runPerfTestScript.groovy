@@ -43,15 +43,15 @@ void install_dependencies() {
     sh '''
         sudo npm uninstall -g chalk
         sudo npm uninstall -g aws-cdk
+        sudo npm uninstall aws-cdk
         sudo npm uninstall -g cdk-assume-role-credential-plugin
+        sudo npm uninstall cdk-assume-role-credential-plugin
         sudo npm list -g
         sudo node --version
         sudo npm --version
         sudo npm install -g aws-cdk@1.142.0
+        cdk --version
         sudo npm install -g cdk-assume-role-credential-plugin@1.4.0
-        sudo npm install -g chalk@4.1.2
-        sudo npm install @aws-cdk/cloudformation-diff
-        sudo npm install -g fs-extra
         sudo npm list -g
     '''
 }
