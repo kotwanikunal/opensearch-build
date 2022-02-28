@@ -76,8 +76,8 @@ pipeline {
             steps {
                 script {
                     sh'''
-                        sudo dnf install wget
-                        yum install wget
+                        apt-get update
+                        apt-get install -y wget
                     '''
                     def bundleManifestObj = downloadBuildManifest(
                         url: BUNDLE_MANIFEST_URL,
