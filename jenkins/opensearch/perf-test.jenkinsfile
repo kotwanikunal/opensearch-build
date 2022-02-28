@@ -3,8 +3,7 @@ lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
 pipeline {
     agent none
     environment {
-        AWS_ROLE_ARN = "arn:aws:iam::${AWS_ACCOUNT_PUBLIC}:role/opensearch-test"
-        AWS_ROLE_SESSION_NAME = "jenkins-test-session"
+        AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
         BUNDLE_MANIFEST = "bundle-manifest.yml"
     }
     tools {
@@ -22,12 +21,6 @@ pipeline {
             defaultValue: '',
             name: 'BUNDLE_MANIFEST_URL',
             description: 'The bundle manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
-            trim: true
-        )
-        string(
-            defaultValue: '',
-            name: 'AGENT_LABEL',
-            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
             trim: true
         )
         string(
@@ -51,10 +44,27 @@ pipeline {
     }
 
     stages {
+        stage('detect docker image + args') {
+            agent {
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028'
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    dockerAgent = detectDockerAgent()
+                }
+            }
+        }
         stage('perf-test') {
             agent {
-                node {
-                    label "${AGENT_LABEL}"
+                docker {
+                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+                    image dockerAgent.image
+                    args dockerAgent.args
+                    alwaysPull true
                 }
             }
             steps {
@@ -92,52 +102,11 @@ pipeline {
                                 buildNumber: "${BUILD_ID}"
                         )
                     }
-                    cleanWs disableDeferredWipeout: true, deleteDirs: true
+                }
+                always {
+                    postCleanup()
                 }
             }
         }
     }
-    /*
-    // Notifications are currently disabled.
-    // TODO: Enable notifications post script integration and HOOK creation
-    post {
-        success {
-            node('Jenkins-Agent-al2-x64-m5xlarge') {
-                script {
-                    def stashed = lib.jenkins.Messages.new(this).get(['perf-test'])
-                    publishNotification(
-                        icon: ':white_check_mark:',
-                        message: 'Integration Performance Successful',
-                        extra: stashed,
-                        credentialsId: 'PERF_TEST_WEBHOOK',
-                    )
-
-                    cleanWs(
-                        disableDeferredWipeout: true,
-                        deleteDirs: true
-                    )
-                }
-            }
-        }
-        failure {
-            node('Jenkins-Agent-al2-x64-m5xlarge') {
-                script  {
-
-                    def stashed = lib.jenkins.Messages.new(this).get(['perf-test'])
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed Performance Tests',
-                        extra: stashed,
-                        credentialsId: 'PERF_TEST_WEBHOOK',
-                    )
-
-                    cleanWs(
-                        disableDeferredWipeout: true,
-                        deleteDirs: true
-                    )
-                }
-            }
-        }
-    }
-    */
 }

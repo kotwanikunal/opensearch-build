@@ -41,20 +41,12 @@ void install_npm(){
 
 void install_dependencies() {
     sh '''
-        sudo npm uninstall -g chalk
-        sudo npm uninstall -g aws-cdk
-        sudo npm uninstall aws-cdk
-        sudo npm uninstall -g cdk-assume-role-credential-plugin
-        sudo npm uninstall cdk-assume-role-credential-plugin
-        sudo npm list -g
-        sudo npm list
         sudo node --version
         sudo npm --version
+        sudo npm install -g npm@latest
         sudo npm install -g aws-cdk@1.124.0
-        sudo npm install aws-cdk@1.124.0
         cdk --version
         sudo npm install -g cdk-assume-role-credential-plugin@1.4.0
-        sudo npm install cdk-assume-role-credential-plugin@1.4.0
         sudo npm list -g
     '''
 }
