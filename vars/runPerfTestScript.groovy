@@ -33,7 +33,7 @@ void install_opensearch_infra_dependencies() {
 void install_npm(){
     sh'''
         sudo yum install -y gcc-c++ make
-        curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
+        curl -sL https://rpm.nodesource.com/setup_14.x | sudo -E bash -
         sudo yum install -y nodejs --enablerepo=nodesource
         node -v
       '''
@@ -47,6 +47,7 @@ void install_dependencies() {
         sudo npm uninstall -g cdk-assume-role-credential-plugin
         sudo npm uninstall cdk-assume-role-credential-plugin
         sudo npm list -g
+        sudo npm list
         sudo node --version
         sudo npm --version
         sudo npm install -g aws-cdk@1.142.0
