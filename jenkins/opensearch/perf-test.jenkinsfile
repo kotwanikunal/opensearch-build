@@ -75,7 +75,7 @@ pipeline {
             }
             steps {
                 script {
-                 sh('sudo yum install')
+                 sh('yum install wget')
                     def bundleManifestObj = downloadBuildManifest(
                         url: BUNDLE_MANIFEST_URL,
                         path: BUNDLE_MANIFEST
