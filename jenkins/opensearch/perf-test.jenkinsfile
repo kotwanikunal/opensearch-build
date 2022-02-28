@@ -25,6 +25,12 @@ pipeline {
         )
         string(
             defaultValue: '',
+            name: 'INPUT_MANIFEST',
+            description: 'The bundle manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
+            trim: true
+        )
+        string(
+            defaultValue: '',
             name: 'TEST_WORKLOAD',
             description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
             trim: true
