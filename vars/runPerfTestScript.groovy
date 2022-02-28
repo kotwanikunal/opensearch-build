@@ -50,7 +50,7 @@ void install_dependencies() {
         sudo npm list
         sudo node --version
         sudo npm --version
-        sudo npm install -g aws-cdk@1.142.0
+        sudo npm install -g aws-cdk@2.13.0
         cdk --version
         sudo npm install -g cdk-assume-role-credential-plugin@1.4.0
         sudo npm list -g
