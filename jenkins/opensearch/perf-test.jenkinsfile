@@ -62,7 +62,7 @@ pipeline {
                 script {
                     dockerAgent = detectDockerAgent()
                     sh'''
-                        docker ps
+                        sudo docker ps
                     '''
                 }
             }
