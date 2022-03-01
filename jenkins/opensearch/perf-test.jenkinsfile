@@ -75,6 +75,7 @@ pipeline {
             }
             steps {
                 script {
+                 sh('docker exec -it -u root <> /bin/bash')
                  sh('yum install wget -y')
                     def bundleManifestObj = downloadBuildManifest(
                         url: BUNDLE_MANIFEST_URL,
