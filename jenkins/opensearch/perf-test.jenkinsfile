@@ -68,13 +68,16 @@ pipeline {
             agent {
                 docker {
                     label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
+                    image dockerAgent.image
                     args dockerAgent.args
                     alwaysPull true
                 }
             }
             steps {
                 script {
+                sh'''
+                docker ps
+                '''
                  sh('yum install wget -y')
                     def bundleManifestObj = downloadBuildManifest(
                         url: BUNDLE_MANIFEST_URL,
