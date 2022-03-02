@@ -40,6 +40,10 @@ def main():
                         help="Security of the cluster should be True/False",
                         default=False)
     parser.add_argument("--keep", dest="keep", action="store_true", help="Do not delete the working temporary directory.")
+    parser.add_argument("--workload", default="nyc_taxis", help="Mensor (internal client) param - Workload name from OpenSeach Benchmark Workloads")
+    parser.add_argument("--workload-options", default="{}", help="Mensor (internal client) param - Json object with OpenSearch Benchmark arguments")
+    parser.add_argument("--warmup-iters", default=0, help="Mensor (internal client) param - Number of times to run a workload before collecting data")
+    parser.add_argument("--test-iters", default=1, help="Mensor (internal client) param - Number of times to run a workload")
     args = parser.parse_args()
 
     manifest = BundleManifest.from_file(args.bundle_manifest)
@@ -59,7 +63,7 @@ def main():
                         as (test_cluster_endpoint, test_cluster_port):
                     time.sleep(120)
                     perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, args.security, current_workspace,
-                                                    location_str)
+                                                    location_str, args)
                     perf_test_suite.execute()
 
 
