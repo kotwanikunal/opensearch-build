@@ -61,9 +61,6 @@ pipeline {
             steps {
                 script {
                     dockerAgent = detectDockerAgent()
-                    sh'''
-                        sudo docker ps
-                    '''
                 }
             }
         }
@@ -78,7 +75,6 @@ pipeline {
             }
             steps {
                 script {
-                 sh('yum install wget -y')
                     def bundleManifestObj = downloadBuildManifest(
                         url: BUNDLE_MANIFEST_URL,
                         path: BUNDLE_MANIFEST

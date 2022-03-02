@@ -4,7 +4,6 @@ void call(Map args = [:]) {
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.bundleManifest))
     String artifactRootUrl = buildManifest.getArtifactRootUrl(jobName, args.buildId)
 
-    install_npm()
     install_dependencies()
     install_opensearch_infra_dependencies()
     withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
@@ -41,12 +40,10 @@ void install_npm(){
 
 void install_dependencies() {
     sh '''
-        sudo node --version
-        sudo npm --version
-        sudo npm install -g npm@latest
-        sudo npm install -g aws-cdk@1.124.0
-        cdk --version
-        sudo npm install -g cdk-assume-role-credential-plugin@1.4.0
-        sudo npm list -g
+        npm install -g fs-extra
+        npm install -g chalk@4.1.2
+        npm install -g @aws-cdk/cloudformation-diff
+        npm install -g aws-cdk
+        npm install -g cdk-assume-role-credential-plugin@1.4.0
     '''
 }
