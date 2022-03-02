@@ -29,15 +29,6 @@ void install_opensearch_infra_dependencies() {
     '''
 }
 
-void install_npm(){
-    sh'''
-        sudo yum install -y gcc-c++ make
-        curl -sL https://rpm.nodesource.com/setup_14.x | sudo -E bash -
-        sudo yum install -y nodejs --enablerepo=nodesource
-        node -v
-      '''
-}
-
 void install_dependencies() {
     sh '''
         npm install -g fs-extra
