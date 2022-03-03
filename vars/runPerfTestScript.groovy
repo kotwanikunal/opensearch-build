@@ -4,11 +4,11 @@ void call(Map args = [:]) {
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.bundleManifest))
     String artifactRootUrl = buildManifest.getArtifactRootUrl(jobName, args.buildId)
 
-    install_dependencies()
-    install_opensearch_infra_dependencies()
-    withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
-        s3Download(file: "config.yml", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${PERF_TEST_CONFIG_LOCATION}/config.yml", force: true)
-    }
+//     install_dependencies()
+//     install_opensearch_infra_dependencies()
+//     withAWS(role: 'opensearch-test', roleAccount: "${AWS_ACCOUNT_PUBLIC}", duration: 900, roleSessionName: 'jenkins-session') {
+//         s3Download(file: "config.yml", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${PERF_TEST_CONFIG_LOCATION}/config.yml", force: true)
+//     }
 
     sh([
         './test.sh',
@@ -17,9 +17,14 @@ void call(Map args = [:]) {
         "--stack test-single-${args.buildId}",
         "--bundle-manifest ${args.bundleManifest}",
         "--config config.yml",
-        args.security ? "--security" : ""
+        args.security ? "--security" : "",
+        isNullOrEmpty(args.workflow) ? "" : "--workload ${args.workload}",
+        isNullOrEmpty(args.testIterations) ? "" : "--test-iters ${args.testIterations}",
+        isNullOrEmpty(args.warmupIterations) ? "" : "--warmup-iters ${args.warmupIterations}",
     ].join(' '))
 }
+
+boolean isNullOrEmpty(String str) { return (str == null || str.allWhitespace) }
 
 void install_opensearch_infra_dependencies() {
     sh'''

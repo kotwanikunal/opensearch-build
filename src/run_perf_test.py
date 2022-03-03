@@ -9,7 +9,7 @@
 import argparse
 import os
 import sys
-import time
+from retry.api import retry_call
 
 import yaml
 
@@ -49,22 +49,17 @@ def main():
     manifest = BundleManifest.from_file(args.bundle_manifest)
     config = yaml.safe_load(args.config)
 
-    tests_dir = os.path.join(os.getcwd(), "test-results")
+    tests_dir = os.path.join(os.getcwd(), "test-results", "perf-test")
     os.makedirs(tests_dir, exist_ok=True)
-    location = os.path.join(tests_dir, "perf-test")
-    os.makedirs(location, exist_ok=True)
-    location_str = str(location)
 
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         current_workspace = os.path.join(work_dir.name, "infra")
         with GitRepository(get_infra_repo_url(), "perf-test-fix", current_workspace):
             with WorkingDirectory(current_workspace):
-                with PerfTestCluster.create(manifest, config, args.stack, args.security, current_workspace) \
-                        as (test_cluster_endpoint, test_cluster_port):
-                    time.sleep(120)
-                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, args.security, current_workspace,
-                                                    location_str, args)
-                    perf_test_suite.execute()
+                with PerfTestCluster.create(manifest, config, args.stack, args.security, current_workspace) as (test_cluster_endpoint, test_cluster_port):
+                    perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, args.security,
+                                                    current_workspace, tests_dir, args)
+                    retry_call(perf_test_suite.execute, tries=3, delay=60, backoff=2)
 
 
 if __name__ == "__main__":

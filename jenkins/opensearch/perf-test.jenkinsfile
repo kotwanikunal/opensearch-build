@@ -2,47 +2,44 @@ lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
 
 pipeline {
     agent none
+     options {
+        timeout(time: 10, unit: 'HOURS')
+    }
     environment {
         AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+        AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
         BUNDLE_MANIFEST = "bundle-manifest.yml"
-    }
-    tools {
-        jdk "JDK14"
-        maven "maven-3.8.2"
     }
     parameters {
         string(
-            defaultValue: '',
             name: 'GITHUB_TOKEN',
             description: 'Github token for account access.',
             trim: true
         )
         string(
-            defaultValue: '',
             name: 'BUNDLE_MANIFEST_URL',
             description: 'The bundle manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
             trim: true
         )
+//         string(
+//             name: 'INPUT_MANIFEST',
+//             description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
+//             trim: true
+//         )
         string(
-            defaultValue: '',
-            name: 'INPUT_MANIFEST',
-            description: 'The bundle manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
-            trim: true
-        )
-        string(
-            defaultValue: '',
+            defaultValue: 'nyc_taxis',
             name: 'TEST_WORKLOAD',
             description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
             trim: true
         )
         string(
-            defaultValue: '',
+            defaultValue: '1',
             name: 'TEST_ITERATIONS',
             description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
             trim: true
         )
         string(
-            defaultValue: '',
+            defaultValue: '0',
             name: 'WARMUP_ITERATIONS',
             description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
             trim: true
@@ -50,26 +47,43 @@ pipeline {
     }
 
     stages {
-        stage('detect docker image + args') {
-            agent {
-                docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                    image 'opensearchstaging/ci-runner:centos7-x64-arm64-jdkmulti-node10.24.1-cypress6.9.1-20211028'
-                    alwaysPull true
-                }
-            }
+//         stage('detect docker image + args') {
+//             agent {
+//                 docker {
+//                     label AGENT_X64
+//                     image 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
+//                     alwaysPull true
+//                 }
+//             }
+//             steps {
+//                 script {
+//                     dockerAgent = detectDockerAgent()
+//                 }
+//             }
+//         }
+        stage('validate-parameters') {
             steps {
                 script {
-                    dockerAgent = detectDockerAgent()
+                    if (BUNDLE_MANIFEST_URL == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Performance Tests failed to start. Missing parameter: BUNDLE_MANIFEST_URL.")
+                    }
+//                     if (INPUT_MANIFEST == '') {
+//                         currentBuild.result = 'ABORTED'
+//                         error("Performance Tests failed to start. Missing parameter: INPUT_MANIFEST.")
+//                     }
+                    if (GITHUB_TOKEN == '') {
+                        currentBuild.result = 'ABORTED'
+                        error("Performance Tests failed to start. Missing parameter: GITHUB_TOKEN.")
+                    }
                 }
             }
         }
         stage('perf-test') {
             agent {
                 docker {
-                    label 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-                    image dockerAgent.image
-                    args dockerAgent.args
+                    label AGENT_X64
+                    image AGENT_IMAGE
                     alwaysPull true
                 }
             }
@@ -88,12 +102,18 @@ pipeline {
 
                     runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
                         buildId: "${BUILD_ID}",
-                        security: false)
+                        security: false,
+                        workload: TEST_WORKLOAD,
+                        testIterations: TEST_ITERATIONS,
+                        warmupIterations: WARMUP_ITERATIONS)
 
                     if(env.HAS_SECURITY) {
                      runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
                         buildId: "${BUILD_ID}",
-                        security: true)
+                        security: true,
+                        workload: TEST_WORKLOAD,
+                        testIterations: TEST_ITERATIONS,
+                        warmupIterations: WARMUP_ITERATIONS)
                     }
 
                 }
