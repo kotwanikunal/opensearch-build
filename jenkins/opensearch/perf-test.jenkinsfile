@@ -21,11 +21,6 @@ pipeline {
             description: 'The bundle manifest URL, e.g. https://ci.opensearch.org/ci/dbc/distribution-build-opensearch/1.2.2/98/linux/x64/builds/opensearch/manifest.yml.',
             trim: true
         )
-//         string(
-//             name: 'INPUT_MANIFEST',
-//             description: 'Input manifest under the manifests folder, e.g. 2.0.0/opensearch-2.0.0.yml.',
-//             trim: true
-//         )
         string(
             defaultValue: 'nyc_taxis',
             name: 'TEST_WORKLOAD',
@@ -47,20 +42,6 @@ pipeline {
     }
 
     stages {
-//         stage('detect docker image + args') {
-//             agent {
-//                 docker {
-//                     label AGENT_X64
-//                     image 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
-//                     alwaysPull true
-//                 }
-//             }
-//             steps {
-//                 script {
-//                     dockerAgent = detectDockerAgent()
-//                 }
-//             }
-//         }
         stage('validate-parameters') {
             steps {
                 script {
@@ -68,10 +49,6 @@ pipeline {
                         currentBuild.result = 'ABORTED'
                         error("Performance Tests failed to start. Missing parameter: BUNDLE_MANIFEST_URL.")
                     }
-//                     if (INPUT_MANIFEST == '') {
-//                         currentBuild.result = 'ABORTED'
-//                         error("Performance Tests failed to start. Missing parameter: INPUT_MANIFEST.")
-//                     }
                     if (GITHUB_TOKEN == '') {
                         currentBuild.result = 'ABORTED'
                         error("Performance Tests failed to start. Missing parameter: GITHUB_TOKEN.")
@@ -108,12 +85,12 @@ pipeline {
                         warmupIterations: WARMUP_ITERATIONS)
 
                     if(env.HAS_SECURITY) {
-                     runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
-                        buildId: "${BUILD_ID}",
-                        security: true,
-                        workload: TEST_WORKLOAD,
-                        testIterations: TEST_ITERATIONS,
-                        warmupIterations: WARMUP_ITERATIONS)
+                         runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
+                            buildId: "${BUILD_ID}",
+                            security: true,
+                            workload: TEST_WORKLOAD,
+                            testIterations: TEST_ITERATIONS,
+                            warmupIterations: WARMUP_ITERATIONS)
                     }
 
                 }
@@ -130,6 +107,39 @@ pipeline {
                     }
                 }
                 always {
+                    postCleanup()
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            node(AGENT_X64) {
+                script {
+                    def stashed = lib.jenkins.Messages.new(this).get(['perf-test'])
+                    publishNotification(
+                        icon: ':white_check_mark:',
+                        message: 'Performance Tests Successful',
+                        extra: stashed,
+                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                    )
+
+                    postCleanup()
+                }
+            }
+        }
+        failure {
+            node(AGENT_X64) {
+                script  {
+                    def stashed = lib.jenkins.Messages.new(this).get(['perf-test'])
+                    publishNotification(
+                        icon: ':warning:',
+                        message: 'Failed Performance Tests',
+                        extra: stashed,
+                        credentialsId: 'INTEG_TEST_WEBHOOK',
+                    )
+
                     postCleanup()
                 }
             }
