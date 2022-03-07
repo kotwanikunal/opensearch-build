@@ -39,12 +39,24 @@ pipeline {
             description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
             trim: true
         )
+        booleanParam(
+            defaultValue: false,
+            name: 'NIGHTLY_BUILD',
+            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+            trim: true
+        )
     }
 
     stages {
         stage('validate-parameters') {
             steps {
                 script {
+                    if(NIGHTLY_BUILD) {
+                       def buildNumber = Jenkins.instance.getItem('jobName').lastSuccessfulBuild.number
+                       echo buildNumber
+                       currentBuild.result = 'ABORTED'
+                       error("Performance Tests failed to start. Missing parameter: GITHUB_TOKEN.")
+                    }
                     if (BUNDLE_MANIFEST_URL == '') {
                         currentBuild.result = 'ABORTED'
                         error("Performance Tests failed to start. Missing parameter: BUNDLE_MANIFEST_URL.")
