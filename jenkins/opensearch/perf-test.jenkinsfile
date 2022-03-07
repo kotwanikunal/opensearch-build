@@ -53,6 +53,10 @@ pipeline {
                     if(NIGHTLY_BUILD) {
                        def buildNumber = Jenkins.instance.getItem('distribution-build-opensearch').lastSuccessfulBuild.number
                        echo "Build Number: ${buildNumber}"
+
+                       def build = Jenkins.instance.getItem('distribution-build-opensearch').lastSuccessfulBuild
+                       echo "Build: ${build}"
+
                        currentBuild.result = 'ABORTED'
                        error("Performance Tests failed to start. Missing parameter: buildNumber.")
                     }
