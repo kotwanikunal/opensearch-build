@@ -43,7 +43,6 @@ pipeline {
             defaultValue: false,
             name: 'NIGHTLY_BUILD',
             description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
-            trim: true
         )
     }
 
