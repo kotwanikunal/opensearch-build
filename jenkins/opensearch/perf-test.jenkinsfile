@@ -52,9 +52,9 @@ pipeline {
                 script {
                     if(NIGHTLY_BUILD) {
                        def buildNumber = Jenkins.instance.getItem('jobName').lastSuccessfulBuild.number
-                       echo buildNumber
+                       echo "Build Number: ${buildNumber}"
                        currentBuild.result = 'ABORTED'
-                       error("Performance Tests failed to start. Missing parameter: GITHUB_TOKEN.")
+                       error("Performance Tests failed to start. Missing parameter: buildNumber.")
                     }
                     if (BUNDLE_MANIFEST_URL == '') {
                         currentBuild.result = 'ABORTED'
