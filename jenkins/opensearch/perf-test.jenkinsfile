@@ -54,7 +54,7 @@ pipeline {
                        def buildNumber = Jenkins.instance.getItem('distribution-build-opensearch').lastSuccessfulBuild.number
                        echo "Build Number: ${buildNumber}"
 
-                       def build = Jenkins.instance.getItem('distribution-build-opensearch').lastSuccessfulBuild.actions.find{ it instanceof ParametersAction }?.parameters.find{it.name == 'CAUSE'}?.value
+                       def build = Jenkins.instance.getItem('distribution-build-opensearch').lastSuccessfulBuild.actions.find{ it instanceof ParametersAction }?.parameters
                        echo "Build: ${build}"
 
                        currentBuild.result = 'ABORTED'
