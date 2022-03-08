@@ -29,15 +29,15 @@ class PerfTestSuite:
 
     def execute(self):
         try:
-            current_working_directory = os.path.join(self.current_workspace, self.work_dir)
-            with WorkingDirectory(current_working_directory):
+            current_workspace = os.path.join(self.current_workspace, self.work_dir)
+            with WorkingDirectory(current_workspace):
                 # dir = os.getcwd()
                 # subprocess.check_call("python3 -m pipenv install", cwd=dir, shell=True)
                 # subprocess.check_call("pipenv install", cwd=dir, shell=True)
 
                 if self.security:
-                    subprocess.check_call(f"{self.command} -s", cwd=current_working_directory, shell=True)
+                    subprocess.check_call(f"{self.command} -s", cwd=current_workspace, shell=True)
                 else:
-                    subprocess.check_call(f"{self.command}", cwd=current_working_directory, shell=True)
+                    subprocess.check_call(f"{self.command}", cwd=current_workspace, shell=True)
         finally:
             os.chdir(self.current_workspace)

@@ -59,7 +59,7 @@ def main():
                 with PerfTestCluster.create(manifest, config, args.stack, args.security, current_workspace) as (test_cluster_endpoint, test_cluster_port):
                     perf_test_suite = PerfTestSuite(manifest, test_cluster_endpoint, args.security,
                                                     current_workspace, tests_dir, args)
-                    retry_call(perf_test_suite.execute, tries=1, delay=60, backoff=2)
+                    retry_call(perf_test_suite.execute, tries=3, delay=60, backoff=2)
 
 
 if __name__ == "__main__":
