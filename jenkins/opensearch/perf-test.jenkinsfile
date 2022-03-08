@@ -50,16 +50,16 @@ pipeline {
         stage('validate-parameters') {
             steps {
                 script {
-                    if(NIGHTLY_BUILD) {
-                       def buildNumber = Jenkins.instance.getItem('distribution-build-opensearch').lastSuccessfulBuild.number
-                       echo "Build Number: ${buildNumber}"
-
-                       def build = Jenkins.instance.getItem('distribution-build-opensearch').lastSuccessfulBuild.actions.find{ it instanceof ParametersAction }?.parameters
-                       echo "Build: ${build}"
-
-                       currentBuild.result = 'ABORTED'
-                       error("Performance Tests failed to start. Missing parameter: buildNumber.")
-                    }
+//                     if(NIGHTLY_BUILD) {
+//                        def buildNumber = Jenkins.instance.getItem('distribution-build-opensearch').lastSuccessfulBuild.number
+//                        echo "Build Number: ${buildNumber}"
+//
+//                        def build = Jenkins.instance.getItem('distribution-build-opensearch').lastSuccessfulBuild.actions.find{ it instanceof ParametersAction }?.parameters
+//                        echo "Build: ${build}"
+//
+//                        currentBuild.result = 'ABORTED'
+//                        error("Performance Tests failed to start. Missing parameter: buildNumber.")
+//                     }
                     if (BUNDLE_MANIFEST_URL == '') {
                         currentBuild.result = 'ABORTED'
                         error("Performance Tests failed to start. Missing parameter: BUNDLE_MANIFEST_URL.")
