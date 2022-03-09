@@ -103,15 +103,15 @@ pipeline {
 
                     lib.jenkins.Messages.new(this).add('perf-test', "[Test]Performance tests without security for ${BUILD_ID} completed")
 
-                    if(env.HAS_SECURITY) {
-                         runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
-                            buildId: "${BUILD_ID}",
-                            security: true,
-                            workload: TEST_WORKLOAD,
-                            testIterations: TEST_ITERATIONS,
-                            warmupIterations: WARMUP_ITERATIONS)
-                         lib.jenkins.Messages.new(this).add('perf-test', "[Test]Performance tests with security for ${BUILD_ID} completed")
-                    }
+//                     if(env.HAS_SECURITY) {
+//                          runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
+//                             buildId: "${BUILD_ID}",
+//                             security: true,
+//                             workload: TEST_WORKLOAD,
+//                             testIterations: TEST_ITERATIONS,
+//                             warmupIterations: WARMUP_ITERATIONS)
+//                          lib.jenkins.Messages.new(this).add('perf-test', "[Test]Performance tests with security for ${BUILD_ID} completed")
+//                     }
 
                 }
             }
