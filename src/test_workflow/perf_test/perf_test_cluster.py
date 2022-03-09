@@ -65,6 +65,7 @@ class PerfTestCluster(TestCluster):
         # command = f"cdk destroy {self.params} --force"
         # logging.info(f'Executing "{command}" in {os.getcwd()}')
         # subprocess.check_call(command, cwd=os.getcwd(), shell=True)
+        pass
 
     def service(self):
         return []
