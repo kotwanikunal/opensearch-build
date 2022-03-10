@@ -92,7 +92,7 @@ pipeline {
                     echo "BUILD_ID: ${BUILD_ID}"
                     echo "Security: ${HAS_SECURITY}"
 
-                    lib.jenkins.Messages.new(this).add('perf-test', "[Test]Executing performance tests for #${BUILD_ID}")
+                    lib.jenkins.Messages.new(this).add('perf-test', "Performance tests for #${BUILD_ID}")
 
                     runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
                         buildId: "${BUILD_ID}",
@@ -101,7 +101,7 @@ pipeline {
                         testIterations: TEST_ITERATIONS,
                         warmupIterations: WARMUP_ITERATIONS)
 
-                    lib.jenkins.Messages.new(this).add('perf-test', "[Test]Performance tests without security for ${BUILD_ID} completed")
+                    lib.jenkins.Messages.new(this).add('perf-test', "Performance tests without security for ${BUILD_ID} completed")
 
                     if(env.HAS_SECURITY) {
                          runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
@@ -110,7 +110,7 @@ pipeline {
                             workload: TEST_WORKLOAD,
                             testIterations: TEST_ITERATIONS,
                             warmupIterations: WARMUP_ITERATIONS)
-                         lib.jenkins.Messages.new(this).add('perf-test', "[Test]Performance tests with security for ${BUILD_ID} completed")
+                         lib.jenkins.Messages.new(this).add('perf-test', "Performance tests with security for ${BUILD_ID} completed")
                     }
 
                 }
@@ -126,7 +126,10 @@ pipeline {
                         )
                     }
                 }
-                always {
+                failure {
+                    postCleanup()
+                }
+                aborted {
                     postCleanup()
                 }
             }
