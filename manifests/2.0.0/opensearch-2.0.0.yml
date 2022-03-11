@@ -9,8 +9,8 @@ build:
   version: 2.0.0
 components:
   - name: OpenSearch
-    ref: main
-    repository: https://github.com/opensearch-project/OpenSearch.git
+    ref: jdk-issue
+    repository: https://github.com/kotwanikunal/OpenSearch.git
     checks:
       - gradle:publish
       - gradle:properties:version
