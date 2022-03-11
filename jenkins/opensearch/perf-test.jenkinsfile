@@ -3,7 +3,7 @@ lib = library(identifier: "jenkins@20211118", retriever: legacySCM(scm))
 pipeline {
     agent none
      options {
-        timeout(time: 10, unit: 'HOURS')
+        timeout(time: 50, unit: 'HOURS')
     }
     environment {
         AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
