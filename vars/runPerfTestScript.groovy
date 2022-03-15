@@ -14,7 +14,7 @@ void call(Map args = [:]) {
         './test.sh',
         'perf-test',
         args.security ? "--stack test-single-security-${args.buildId}" :
-        "--stack test-single-${args.buildId}",
+        "--stack test-single-${args.buildId}-${args.architecture}",
         "--bundle-manifest ${args.bundleManifest}",
         "--config config.yml",
         args.security ? "--security" : "",
