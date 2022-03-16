@@ -49,7 +49,10 @@ def main():
     manifest = BundleManifest.from_file(args.bundle_manifest)
     config = yaml.safe_load(args.config)
 
-    tests_dir = os.path.join(os.getcwd(), "test-results", "perf-test")
+    if args.security:
+        tests_dir = os.path.join(os.getcwd(), "test-results", "perf-test", "with-security")
+    else:
+        tests_dir = os.path.join(os.getcwd(), "test-results", "perf-test", "without-security")
     os.makedirs(tests_dir, exist_ok=True)
 
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:

@@ -110,6 +110,24 @@ pipeline {
                             lib.jenkins.Messages.new(this).add('perf-test', "Performance tests with security for ${BUILD_ID} completed")
                         }
                     }
+                    post {
+                        success {
+                            script {
+                                uploadTestResults(
+                                    buildManifestFileName: "${BUNDLE_MANIFEST}",
+                                    jobName: 'perf-test',
+                                    buildNumber: "${BUILD_ID}"
+                                )
+                            }
+                            postCleanup()
+                        }
+                        failure {
+                            postCleanup()
+                        }
+                        aborted {
+                            postCleanup()
+                        }
+                    }
                 }
                 stage('test-without-security') {
                     agent {
@@ -147,27 +165,26 @@ pipeline {
                             lib.jenkins.Messages.new(this).add('perf-test', "Performance tests without security for ${BUILD_ID} completed")
                         }
                     }
-                }
-
-            }
-
-            post {
-                success {
-                    script {
-                        uploadTestResults(
-                            buildManifestFileName: "${BUNDLE_MANIFEST}",
-                            jobName: 'perf-test',
-                            buildNumber: "${BUILD_ID}"
-                        )
+                    post {
+                        success {
+                            script {
+                                uploadTestResults(
+                                    buildManifestFileName: "${BUNDLE_MANIFEST}",
+                                    jobName: 'perf-test',
+                                    buildNumber: "${BUILD_ID}"
+                                )
+                            }
+                            postCleanup()
+                        }
+                        failure {
+                            postCleanup()
+                        }
+                        aborted {
+                            postCleanup()
+                        }
                     }
-                    postCleanup()
                 }
-                failure {
-                    postCleanup()
-                }
-                aborted {
-                    postCleanup()
-                }
+
             }
         }
     }
