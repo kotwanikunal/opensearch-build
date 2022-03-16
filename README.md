@@ -14,7 +14,7 @@
     - [Building Patches](#building-patches)
     - [CI/CD Environment](#cicd-environment)
     - [Testing the Distribution](#testing-the-distribution)
-    - [Signing Artifacts](#signing-artifacts)
+    - [Signing the Artifacts](#signing-artifacts)
   - [Making a Release](#making-a-release)
     - [Releasing for Linux](#releasing-for-linux)
     - [Releasing for FreeBSD](#releasing-for-freebsd)
