@@ -72,13 +72,6 @@ pipeline {
             }
         }
         stage('perf-test') {
-            agent {
-                docker {
-                    label AGENT_X64
-                    image AGENT_IMAGE
-                    alwaysPull true
-                }
-            }
             parallel {
                 stage('test-with-security') {
                     agent {
