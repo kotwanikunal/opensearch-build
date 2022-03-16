@@ -81,61 +81,78 @@ pipeline {
             }
             parallel {
                 stage('test-with-security') {
-                    script {
-                        def bundleManifestObj = downloadBuildManifest(
-                            url: BUNDLE_MANIFEST_URL,
-                            path: BUNDLE_MANIFEST
-                        )
-                        String buildId = bundleManifestObj.getArtifactBuildId()
-                        env.BUILD_ID = buildId
-                        env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
-                        env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
-                        echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
-                        echo "BUILD_ID: ${BUILD_ID}"
-                        echo "BUILD_ID: ${BUILD_ID}"
-                        echo "Security: ${HAS_SECURITY}"
-                        echo "Architecture: ${ARCHITECTURE}"
+                    agent {
+                        docker {
+                            label AGENT_X64
+                            image AGENT_IMAGE
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            def bundleManifestObj = downloadBuildManifest(
+                                url: BUNDLE_MANIFEST_URL,
+                                path: BUNDLE_MANIFEST
+                            )
+                            String buildId = bundleManifestObj.getArtifactBuildId()
+                            env.BUILD_ID = buildId
+                            env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
+                            env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
+                            echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
+                            echo "BUILD_ID: ${BUILD_ID}"
+                            echo "BUILD_ID: ${BUILD_ID}"
+                            echo "Security: ${HAS_SECURITY}"
+                            echo "Architecture: ${ARCHITECTURE}"
 
-                        lib.jenkins.Messages.new(this).add('perf-test', "Performance tests for #${BUILD_ID}")
+                            lib.jenkins.Messages.new(this).add('perf-test', "Performance tests for #${BUILD_ID}")
 
-                        runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
-                            buildId: "${BUILD_ID}",
-                            architecture: "${ARCHITECTURE}",
-                            security: true,
-                            workload: TEST_WORKLOAD,
-                            testIterations: TEST_ITERATIONS,
-                            warmupIterations: WARMUP_ITERATIONS)
+                            runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
+                                buildId: "${BUILD_ID}",
+                                architecture: "${ARCHITECTURE}",
+                                security: true,
+                                workload: TEST_WORKLOAD,
+                                testIterations: TEST_ITERATIONS,
+                                warmupIterations: WARMUP_ITERATIONS)
 
-                        lib.jenkins.Messages.new(this).add('perf-test', "Performance tests with security for ${BUILD_ID} completed")
+                            lib.jenkins.Messages.new(this).add('perf-test', "Performance tests with security for ${BUILD_ID} completed")
+                        }
                     }
                 }
                 stage('test-without-security') {
-                    script {
-                        def bundleManifestObj = downloadBuildManifest(
-                            url: BUNDLE_MANIFEST_URL,
-                            path: BUNDLE_MANIFEST
-                        )
-                        String buildId = bundleManifestObj.getArtifactBuildId()
-                        env.BUILD_ID = buildId
-                        env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
-                        env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
-                        echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
-                        echo "BUILD_ID: ${BUILD_ID}"
-                        echo "BUILD_ID: ${BUILD_ID}"
-                        echo "Security: ${HAS_SECURITY}"
-                        echo "Architecture: ${ARCHITECTURE}"
+                    agent {
+                        docker {
+                            label AGENT_X64
+                            image AGENT_IMAGE
+                            alwaysPull true
+                        }
+                    }
+                    steps {
+                        script {
+                            def bundleManifestObj = downloadBuildManifest(
+                                url: BUNDLE_MANIFEST_URL,
+                                path: BUNDLE_MANIFEST
+                            )
+                            String buildId = bundleManifestObj.getArtifactBuildId()
+                            env.BUILD_ID = buildId
+                            env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
+                            env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
+                            echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
+                            echo "BUILD_ID: ${BUILD_ID}"
+                            echo "BUILD_ID: ${BUILD_ID}"
+                            echo "Architecture: ${ARCHITECTURE}"
 
-                        lib.jenkins.Messages.new(this).add('perf-test', "Performance tests for #${BUILD_ID}")
+                            lib.jenkins.Messages.new(this).add('perf-test', "Performance tests for #${BUILD_ID}")
 
-                        runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
-                            buildId: "${BUILD_ID}",
-                            architecture: "${ARCHITECTURE}",
-                            security: false,
-                            workload: TEST_WORKLOAD,
-                            testIterations: TEST_ITERATIONS,
-                            warmupIterations: WARMUP_ITERATIONS)
+                            runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
+                                buildId: "${BUILD_ID}",
+                                architecture: "${ARCHITECTURE}",
+                                security: false,
+                                workload: TEST_WORKLOAD,
+                                testIterations: TEST_ITERATIONS,
+                                warmupIterations: WARMUP_ITERATIONS)
 
-                        lib.jenkins.Messages.new(this).add('perf-test', "Performance tests without security for ${BUILD_ID} completed")
+                            lib.jenkins.Messages.new(this).add('perf-test', "Performance tests without security for ${BUILD_ID} completed")
+                        }
                     }
                 }
 
