@@ -68,14 +68,14 @@ pipeline {
                         currentBuild.result = 'ABORTED'
                         error("Performance Tests failed to start. Missing parameter: GITHUB_TOKEN.")
                     }
-                    if (TEST_ITERATIONS != null && !TEST_ITERATIONS.isInteger()) {
-                        currentBuild.result = 'ABORTED'
-                        error("Performance Tests failed to start. Invalid value for parameter: TEST_ITERATIONS. Value should be an integer.")
-                    }
-                    if (WARMUP_ITERATIONS != null && !WARMUP_ITERATIONS.isInteger()) {
-                        currentBuild.result = 'ABORTED'
-                        error("Performance Tests failed to start. Invalid value for parameter: WARMUP_ITERATIONS. Value should be an integer.")
-                    }
+//                     if (TEST_ITERATIONS != null && !TEST_ITERATIONS.isInteger()) {
+//                         currentBuild.result = 'ABORTED'
+//                         error("Performance Tests failed to start. Invalid value for parameter: TEST_ITERATIONS. Value should be an integer.")
+//                     }
+//                     if (WARMUP_ITERATIONS != null && !WARMUP_ITERATIONS.isInteger()) {
+//                         currentBuild.result = 'ABORTED'
+//                         error("Performance Tests failed to start. Invalid value for parameter: WARMUP_ITERATIONS. Value should be an integer.")
+//                     }
                 }
             }
         }
