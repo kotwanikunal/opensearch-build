@@ -6,7 +6,7 @@ pipeline {
         timeout(time: 50, unit: 'HOURS')
     }
     environment {
-        AGENT_X64 = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
+        AGENT_LABEL = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
         AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
         BUNDLE_MANIFEST = "bundle-manifest.yml"
     }
@@ -50,7 +50,7 @@ pipeline {
         stage('validate-and-set-parameters') {
             agent {
                 docker {
-                    label AGENT_X64
+                    label AGENT_LABEL
                     image AGENT_IMAGE
                     alwaysPull true
                 }
@@ -99,7 +99,7 @@ pipeline {
                 stage('test-with-security') {
                     agent {
                         docker {
-                            label AGENT_X64
+                            label AGENT_LABEL
                             image AGENT_IMAGE
                             alwaysPull true
                         }
@@ -124,7 +124,7 @@ pipeline {
                             runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
                                 buildId: "${BUILD_ID}",
                                 architecture: "${ARCHITECTURE}",
-                                security: true,
+                                insecure: false,
                                 workload: TEST_WORKLOAD,
                                 testIterations: TEST_ITERATIONS,
                                 warmupIterations: WARMUP_ITERATIONS)
@@ -154,7 +154,7 @@ pipeline {
                 stage('test-without-security') {
                     agent {
                         docker {
-                            label AGENT_X64
+                            label AGENT_LABEL
                             image AGENT_IMAGE
                             alwaysPull true
                         }
@@ -176,7 +176,7 @@ pipeline {
                             runPerfTestScript(bundleManifest: "${BUNDLE_MANIFEST}",
                                 buildId: "${BUILD_ID}",
                                 architecture: "${ARCHITECTURE}",
-                                security: false,
+                                insecure: true,
                                 workload: TEST_WORKLOAD,
                                 testIterations: TEST_ITERATIONS,
                                 warmupIterations: WARMUP_ITERATIONS)
@@ -203,7 +203,6 @@ pipeline {
                         }
                     }
                 }
-
             }
         }
     }
