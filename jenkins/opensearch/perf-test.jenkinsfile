@@ -97,7 +97,7 @@ pipeline {
                             alwaysPull true
                         }
                     }
-                    when {environment name: 'HAS_SECURITY', value: true }
+                    when {environment name: 'HAS_SECURITY', value: 'true' }
                     steps {
                         script {
                             def bundleManifestObj = downloadBuildManifest(
