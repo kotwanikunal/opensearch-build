@@ -47,7 +47,7 @@ pipeline {
     }
 
     stages {
-        stage('validate-parameters') {
+        stage('validate-and-set-parameters') {
             steps {
                 script {
                     //                     if(NIGHTLY_BUILD) {
@@ -68,14 +68,22 @@ pipeline {
                         currentBuild.result = 'ABORTED'
                         error("Performance Tests failed to start. Missing parameter: GITHUB_TOKEN.")
                     }
-//                     if (TEST_ITERATIONS != null && !TEST_ITERATIONS.isInteger()) {
-//                         currentBuild.result = 'ABORTED'
-//                         error("Performance Tests failed to start. Invalid value for parameter: TEST_ITERATIONS. Value should be an integer.")
-//                     }
-//                     if (WARMUP_ITERATIONS != null && !WARMUP_ITERATIONS.isInteger()) {
-//                         currentBuild.result = 'ABORTED'
-//                         error("Performance Tests failed to start. Invalid value for parameter: WARMUP_ITERATIONS. Value should be an integer.")
-//                     }
+                    if (TEST_ITERATIONS != null && !TEST_ITERATIONS.isInteger()) {
+                        currentBuild.result = 'ABORTED'
+                        error("Performance Tests failed to start. Invalid value for parameter: TEST_ITERATIONS. Value should be an integer.")
+                    }
+                    if (WARMUP_ITERATIONS != null && !WARMUP_ITERATIONS.isInteger()) {
+                        currentBuild.result = 'ABORTED'
+                        error("Performance Tests failed to start. Invalid value for parameter: WARMUP_ITERATIONS. Value should be an integer.")
+                    }
+                     def bundleManifestObj = downloadBuildManifest(
+                                url: BUNDLE_MANIFEST_URL,
+                                path: BUNDLE_MANIFEST
+                            )
+                    String buildId = bundleManifestObj.getArtifactBuildId()
+                    env.BUILD_ID = buildId
+                    env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
+                    env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
                 }
             }
         }
@@ -89,16 +97,13 @@ pipeline {
                             alwaysPull true
                         }
                     }
+                    when {environment name: 'HAS_SECURITY', value: true }
                     steps {
                         script {
                             def bundleManifestObj = downloadBuildManifest(
                                 url: BUNDLE_MANIFEST_URL,
                                 path: BUNDLE_MANIFEST
                             )
-                            String buildId = bundleManifestObj.getArtifactBuildId()
-                            env.BUILD_ID = buildId
-                            env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
-                            env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
                             echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
                             echo "BUILD_ID: ${BUILD_ID}"
                             echo "BUILD_ID: ${BUILD_ID}"
@@ -151,10 +156,7 @@ pipeline {
                                 url: BUNDLE_MANIFEST_URL,
                                 path: BUNDLE_MANIFEST
                             )
-                            String buildId = bundleManifestObj.getArtifactBuildId()
-                            env.BUILD_ID = buildId
-                            env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
-                            env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
+
                             echo "BUNDLE_MANIFEST: ${BUNDLE_MANIFEST}"
                             echo "BUILD_ID: ${BUILD_ID}"
                             echo "BUILD_ID: ${BUILD_ID}"
