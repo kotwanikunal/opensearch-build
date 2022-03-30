@@ -209,7 +209,7 @@ pipeline {
 
     post {
         success {
-            node(AGENT_X64) {
+            node(AGENT_LABEL) {
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get(['perf-test'])
                     publishNotification(
@@ -224,7 +224,7 @@ pipeline {
             }
         }
         failure {
-            node(AGENT_X64) {
+            node(AGENT_LABEL) {
                 script {
                     def stashed = lib.jenkins.Messages.new(this).get(['perf-test'])
                     publishNotification(
