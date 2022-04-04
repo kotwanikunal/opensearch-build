@@ -92,6 +92,7 @@ pipeline {
                     env.BUILD_ID = buildId
                     env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
                     env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
+                    echo "HAS_SECURITY: ${env.HAS_SECURITY}"
                     lib.jenkins.Messages.new(this).add(JOB_NAME, "Performance tests for #${BUILD_ID}")
                 }
             }
@@ -107,7 +108,7 @@ pipeline {
                         }
                     }
                     when {
-                        expression { HAS_SECURITY == true }
+                        expression { return env.HAS_SECURITY }
                     }
                     steps {
                         script {
@@ -180,7 +181,7 @@ pipeline {
 
                             lib.jenkins.Messages.new(this).add(JOB_NAME,
                                 lib.jenkins.Messages.new(this).get([JOB_NAME]) +
-                                "Performance tests without security for ${BUILD_ID} completed")
+                                "\nPerformance tests without security for ${BUILD_ID} completed")
                         }
                     }
                     post {
