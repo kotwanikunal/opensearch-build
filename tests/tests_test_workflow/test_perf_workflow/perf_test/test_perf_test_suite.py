@@ -32,4 +32,4 @@ class TestPerfTestSuite(unittest.TestCase):
         with patch("test_workflow.perf_test.perf_test_suite.os.chdir"):
             with patch("subprocess.check_call") as mock_check_call:
                 self.perf_test_suite.execute()
-                self.assertEqual(mock_check_call.call_count, 3)
+                self.assertEqual(mock_check_call.call_count, 2)
