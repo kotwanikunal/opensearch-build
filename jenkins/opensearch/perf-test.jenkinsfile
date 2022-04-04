@@ -96,7 +96,7 @@ pipeline {
                 }
             }
         }
-        stage(JOB_NAME) {
+        stage('perf-test') {
             parallel {
                 stage('test-with-security') {
                     agent {
