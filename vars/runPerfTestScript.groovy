@@ -1,5 +1,4 @@
 void call(Map args = [:]) {
-    String jobType = args.jobType ?: 'perf-test'
     lib = library(identifier: 'jenkins@20211123', retriever: legacySCM(scm))
     def buildManifest = lib.jenkins.BuildManifest.new(readYaml(file: args.bundleManifest))
 
@@ -12,8 +11,8 @@ void call(Map args = [:]) {
     sh([
         './test.sh',
         'perf-test',
-        args.insecure ? "--stack test-single-${args.buildId}-${args.architecture}-${jobType}" :
-        "--stack test-single-security-${args.buildId}-${args.architecture}-${jobType}",
+        args.insecure ? "--stack test-single-${args.buildId}-${args.architecture}-${args.buildNumber}" :
+        "--stack test-single-security-${args.buildId}-${args.architecture}-${args.buildNumber}",
         "--bundle-manifest ${args.bundleManifest}",
         "--config config.yml",
         args.insecure ? "--without-security" : "",

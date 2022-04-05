@@ -40,12 +40,12 @@ pipeline {
             description: 'Number of times to run a workload before collecting data for Mensor (internal client).',
             trim: true
         )
-        string(
-            name: 'JOB_TYPE_LABEL',
-            defaultValue: 'perf-test',
-            description: 'Job type for performance test - NIGHTLY, LONGEVITY.',
-            trim: true
-        )
+//         string(
+//             name: 'JOB_TYPE_LABEL',
+//             defaultValue: 'perf-test',
+//             description: 'Job type for performance test - NIGHTLY, LONGEVITY.',
+//             trim: true
+//         )
 //         booleanParam(
 //             defaultValue: false,
 //             name: 'NIGHTLY_BUILD',
@@ -133,7 +133,8 @@ pipeline {
                                 workload: TEST_WORKLOAD,
                                 testIterations: TEST_ITERATIONS,
                                 warmupIterations: WARMUP_ITERATIONS,
-                                jobType: JOB_TYPE_LABEL)
+                                buildNumber: env.BUILD_NUMBER)
+//                                 jobType: JOB_TYPE_LABEL)
 
                             lib.jenkins.Messages.new(this).add(JOB_NAME,
                                 lib.jenkins.Messages.new(this).get([JOB_NAME]) +
@@ -185,7 +186,8 @@ pipeline {
                                 workload: TEST_WORKLOAD,
                                 testIterations: TEST_ITERATIONS,
                                 warmupIterations: WARMUP_ITERATIONS,
-                                jobType: JOB_TYPE_LABEL)
+                                buildNumber: env.BUILD_NUMBER)
+//                                 jobType: JOB_TYPE_LABEL)
 
                             lib.jenkins.Messages.new(this).add(JOB_NAME,
                                 lib.jenkins.Messages.new(this).get([JOB_NAME]) +
