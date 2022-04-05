@@ -11,5 +11,5 @@ void call(Map args = [:]) {
     }
 
     def baseUrl = buildManifest.getArtifactRootUrl("${PUBLIC_ARTIFACT_URL}", args.jobName, args.buildNumber)
-    lib.jenkins.Messages.new(this).add(args.jobName, "${baseUrl}/test-results/")
+    lib.jenkins.Messages.new(this).add("${STAGE_NAME}", "${baseUrl}/test-results/")
 }

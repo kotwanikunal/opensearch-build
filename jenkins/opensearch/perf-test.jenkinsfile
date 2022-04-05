@@ -40,11 +40,17 @@ pipeline {
             description: 'Number of times to run a workload before collecting data for Mensor (internal client).',
             trim: true
         )
-        booleanParam(
-            defaultValue: false,
-            name: 'NIGHTLY_BUILD',
-            description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+        string(
+            name: 'JOB_TYPE_LABEL',
+            defaultValue: 'perf-test',
+            description: 'Job type for performance test - NIGHTLY, LONGEVITY.',
+            trim: true
         )
+//         booleanParam(
+//             defaultValue: false,
+//             name: 'NIGHTLY_BUILD',
+//             description: 'The agent label where the tests should be executed, e.g. Jenkins-Agent-al2-x64-c54xlarge-Docker-Host.',
+//         )
     }
 
     stages {
@@ -126,7 +132,8 @@ pipeline {
                                 insecure: false,
                                 workload: TEST_WORKLOAD,
                                 testIterations: TEST_ITERATIONS,
-                                warmupIterations: WARMUP_ITERATIONS)
+                                warmupIterations: WARMUP_ITERATIONS,
+                                jobType: JOB_TYPE_LABEL)
 
                             lib.jenkins.Messages.new(this).add(JOB_NAME,
                                 lib.jenkins.Messages.new(this).get([JOB_NAME]) +
@@ -177,7 +184,8 @@ pipeline {
                                 insecure: true,
                                 workload: TEST_WORKLOAD,
                                 testIterations: TEST_ITERATIONS,
-                                warmupIterations: WARMUP_ITERATIONS)
+                                warmupIterations: WARMUP_ITERATIONS,
+                                jobType: JOB_TYPE_LABEL)
 
                             lib.jenkins.Messages.new(this).add(JOB_NAME,
                                 lib.jenkins.Messages.new(this).get([JOB_NAME]) +
