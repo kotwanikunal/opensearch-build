@@ -114,7 +114,7 @@ pipeline {
                         }
                     }
                     when {
-                        expression { return env.HAS_SECURITY }
+                        expression { return env.HAS_SECURITY.toBoolean() }
                     }
                     steps {
                         script {
