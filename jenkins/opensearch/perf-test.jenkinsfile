@@ -7,7 +7,6 @@ pipeline {
     }
     environment {
         AGENT_LABEL = 'Jenkins-Agent-al2-x64-c54xlarge-Docker-Host'
-        AGENT_IMAGE = 'opensearchstaging/ci-runner:ci-runner-centos7-v1'
         BUNDLE_MANIFEST = 'bundle-manifest.yml'
         JOB_NAME = 'perf-test'
     }
@@ -56,10 +55,8 @@ pipeline {
     stages {
         stage('validate-and-set-parameters') {
             agent {
-                docker {
+                node {
                     label AGENT_LABEL
-                    image AGENT_IMAGE
-                    alwaysPull true
                 }
             }
             steps {
@@ -107,10 +104,8 @@ pipeline {
             parallel {
                 stage('test-with-security') {
                     agent {
-                        docker {
+                        node {
                             label AGENT_LABEL
-                            image AGENT_IMAGE
-                            alwaysPull true
                         }
                     }
                     when {
@@ -162,10 +157,8 @@ pipeline {
                 }
                 stage('test-without-security') {
                     agent {
-                        docker {
+                        node {
                             label AGENT_LABEL
-                            image AGENT_IMAGE
-                            alwaysPull true
                         }
                     }
                     steps {
