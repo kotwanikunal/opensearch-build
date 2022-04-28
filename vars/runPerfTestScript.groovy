@@ -8,7 +8,8 @@ void call(Map args = [:]) {
         s3Download(file: "config.yml", bucket: "${ARTIFACT_BUCKET_NAME}", path: "${PERF_TEST_CONFIG_LOCATION}/config.yml", force: true)
     }
 
-    sh([
+    withCredentials([usernamePassword(credentialsId: "${GITHUB_BOT_TOKEN_NAME}", usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+       sh([
         './test.sh',
         'perf-test',
         args.insecure ? "--stack test-single-${args.buildId}-${args.architecture}-${args.buildNumber}" :
@@ -19,7 +20,8 @@ void call(Map args = [:]) {
         isNullOrEmpty(args.workload) ? "" : "--workload ${args.workload}",
         isNullOrEmpty(args.testIterations) ? "" : "--test-iters ${args.testIterations}",
         isNullOrEmpty(args.warmupIterations) ? "" : "--warmup-iters ${args.warmupIterations}",
-    ].join(' '))
+        ].join(' '))
+    }
 }
 
 boolean isNullOrEmpty(String str) { return (str == null || str.allWhitespace) }
