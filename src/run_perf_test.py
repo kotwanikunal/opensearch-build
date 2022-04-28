@@ -23,8 +23,8 @@ from test_workflow.perf_test.perf_test_suite import PerfTestSuite
 
 def get_infra_repo_url():
     if "GITHUB_TOKEN" in os.environ:
-        return "https://${GITHUB_TOKEN}@github.com/kotwanikunal/opensearch-infra.git"
-    return "https://github.com/kotwanikunal/opensearch-infra.git"
+        return "https://${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-infra.git"
+    return "https://github.com/opensearch-project/opensearch-infra.git"
 
 
 def main():
@@ -55,7 +55,7 @@ def main():
 
     with TemporaryDirectory(keep=args.keep, chdir=True) as work_dir:
         current_workspace = os.path.join(work_dir.name, "infra")
-        with GitRepository(get_infra_repo_url(), "perf-test-fix", current_workspace):
+        with GitRepository(get_infra_repo_url(), "main", current_workspace):
             with WorkingDirectory(current_workspace):
                 with PerfTestCluster.create(
                         manifest,
