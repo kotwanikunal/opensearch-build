@@ -55,7 +55,7 @@ class PerfTestSuite:
         try:
             current_workspace = os.path.join(self.current_workspace, self.work_dir)
             with WorkingDirectory(current_workspace):
-                subprocess.check_call("pipenv install", cwd=current_workspace, shell=True)
+                subprocess.check_call("touch Pipfile", cwd=current_workspace, shell=True)
                 if self.security:
                     subprocess.check_call(f"{self.command} -s", cwd=current_workspace, shell=True)
                 else:

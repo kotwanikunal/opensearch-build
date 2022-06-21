@@ -6,6 +6,7 @@
 
 import logging
 import os
+import subprocess
 
 import yaml
 from retry.api import retry_call  # type: ignore
@@ -31,16 +32,17 @@ class PerfTestRunnerOpenSearch(PerfTestRunner):
 
     def get_infra_repo_url(self) -> str:
         if "GITHUB_TOKEN" in os.environ:
-            return "https://${GITHUB_TOKEN}@github.com/opensearch-project/opensearch-infra.git"
-        return "https://github.com/opensearch-project/opensearch-infra.git"
+            return "https://${GITHUB_TOKEN}@github.com/kotwanikunal/opensearch-infra.git"
+        return "https://github.com/kotwanikunal/opensearch-infra.git"
 
     def run_tests(self) -> None:
         config = yaml.safe_load(self.args.config)
         with TemporaryDirectory(keep=self.args.keep, chdir=True) as work_dir:
             current_workspace = os.path.join(work_dir.name, "infra")
             logging.info("current_workspace is " + str(current_workspace))
-            with GitRepository(self.get_infra_repo_url(), "main", current_workspace):
+            with GitRepository(self.get_infra_repo_url(), "cdk-alternative", current_workspace):
                 with WorkingDirectory(current_workspace):
+                    subprocess.run("touch Pipfile", shell=True)
                     with PerfSingleNodeCluster.create(self.test_manifest, config, self.args.stack, PerfTestClusterConfig(self.security), current_workspace) as test_cluster:
                         perf_test_suite = PerfTestSuite(self.test_manifest, test_cluster.endpoint_with_port, self.security, current_workspace, self.tests_dir, self.args)
                         retry_call(perf_test_suite.execute, tries=3, delay=60, backoff=2)

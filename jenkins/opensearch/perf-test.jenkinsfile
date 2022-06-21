@@ -24,6 +24,12 @@ pipeline {
             trim: true
         )
         string(
+            defaultValue: 'GITHUB_TOKEN',
+            name: 'GITHUB_TOKEN',
+            description: 'The token name from OpenSearch Benchmark Workloads for Mensor (internal client).',
+            trim: true
+        )
+        string(
             defaultValue: '1',
             name: 'TEST_ITERATIONS',
             description: 'Number of times to run a workload for Mensor (internal client).',
@@ -68,6 +74,7 @@ pipeline {
                     env.BUILD_ID = buildId
                     env.HAS_SECURITY = bundleManifestObj.components.containsKey("security")
                     env.ARCHITECTURE = bundleManifestObj.getArtifactArchitecture()
+                    env.GITHUB_TOKEN = GITHUB_TOKEN
                     echo "HAS_SECURITY: ${env.HAS_SECURITY}"
                     lib.jenkins.Messages.new(this).add(JOB_NAME, "Performance tests for #${BUILD_ID}")
                 }
@@ -185,34 +192,34 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            node(AGENT_LABEL) {
-                script {
-                    def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
-                    publishNotification(
-                        icon: ':white_check_mark:',
-                        message: 'Performance Tests Successful',
-                        extra: stashed,
-                        credentialsId: 'INTEG_TEST_WEBHOOK',
-                    )
-                    postCleanup()
-                }
-            }
-        }
-        failure {
-            node(AGENT_LABEL) {
-                script {
-                    def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
-                    publishNotification(
-                        icon: ':warning:',
-                        message: 'Failed Performance Tests',
-                        extra: stashed,
-                        credentialsId: 'INTEG_TEST_WEBHOOK',
-                    )
-                    postCleanup()
-                }
-            }
-        }
-    }
+//     post {
+//         success {
+//             node(AGENT_LABEL) {
+//                 script {
+//                     def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
+//                     publishNotification(
+//                         icon: ':white_check_mark:',
+//                         message: 'Performance Tests Successful',
+//                         extra: stashed,
+//                         credentialsId: 'INTEG_TEST_WEBHOOK',
+//                     )
+//                     postCleanup()
+//                 }
+//             }
+//         }
+//         failure {
+//             node(AGENT_LABEL) {
+//                 script {
+//                     def stashed = lib.jenkins.Messages.new(this).get([JOB_NAME])
+//                     publishNotification(
+//                         icon: ':warning:',
+//                         message: 'Failed Performance Tests',
+//                         extra: stashed,
+//                         credentialsId: 'INTEG_TEST_WEBHOOK',
+//                     )
+//                     postCleanup()
+//                 }
+//             }
+//         }
+//     }
 }
