@@ -65,6 +65,30 @@ pipeline {
                 }
             }
         }
+        stage('Get Repository Commits') {
+            agent {
+                docker {
+                    label AGENT_X64
+                    image dockerAgent.image
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    getRepositoryCommit(
+                        componentName: "${COMPONENT_NAME}",
+                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                        outputFile: "commits.yml"
+                    )
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'commits.yml'
+                    postCleanup()
+                }
+            }
+        }
         stage('build') {
             parallel {
                 stage('build-and-test-linux-x64-tar') {

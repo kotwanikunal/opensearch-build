@@ -16,27 +16,71 @@ class TestInputManifests(unittest.TestCase):
         path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "manifests"))
         self.assertEqual(path, InputManifests.manifests_path())
 
+    def test_legacy_manifests_path(self) -> None:
+        path = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "legacy-manifests"))
+        self.assertEqual(path, InputManifests.legacy_manifests_path())
+
+    def test_files(self) -> None:
+        files = InputManifests.files("invalid")
+        self.assertEqual(len(files), 0)
+
+    def test_files_opensearch(self) -> None:
+        files = InputManifests.files("opensearch")
+        self.assertTrue(os.path.join(InputManifests.manifests_path(), os.path.join("1.3.0", "opensearch-1.3.0.yml")) in files)
+        self.assertTrue(os.path.join(InputManifests.legacy_manifests_path(), os.path.join("1.2.1", "opensearch-1.2.1.yml")) in files)
+
+    def test_files_opensearch_dashboards(self) -> None:
+        files = InputManifests.files("opensearch-dashboards")
+        self.assertTrue(os.path.join(InputManifests.manifests_path(), os.path.join("1.3.3", "opensearch-dashboards-1.3.3.yml")) in files)
+        self.assertTrue(os.path.join(InputManifests.legacy_manifests_path(), os.path.join("1.2.1", "opensearch-dashboards-1.2.1.yml")) in files)
+
     def test_create_manifest_opensearch(self) -> None:
-        input_manifests = InputManifests("opensearch")
+        input_manifests = InputManifests("OpenSearch")
         input_manifest = input_manifests.create_manifest("1.2.3", [])
         self.assertEqual(
             input_manifest.to_dict(),
             {
                 "schema-version": "1.0",
-                "build": {"name": "opensearch", "version": "1.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2"}},
+                "build": {"name": "OpenSearch", "version": "1.2.3"},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2",
+                                 "args": "-e JAVA_HOME=/opt/java/openjdk-11"}},
+            },
+        )
+
+    def test_create_manifest_opensearch_from_default(self) -> None:
+        input_manifests = InputManifests("OpenSearch")
+        input_manifest = input_manifests.create_manifest("0.2.3", [])
+        self.assertEqual(
+            input_manifest.to_dict(),
+            {
+                "schema-version": "1.0",
+                "build": {"name": "OpenSearch", "version": "0.2.3"},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-build-v2",
+                                 "args": "-e JAVA_HOME=/opt/java/openjdk-17"}},
             },
         )
 
     def test_create_manifest_opensearch_dashboards(self) -> None:
-        input_manifests = InputManifests("opensearch-dashboards")
+        input_manifests = InputManifests("OpenSearch Dashboards")
         input_manifest = input_manifests.create_manifest("1.2.3", [])
         self.assertEqual(
             input_manifest.to_dict(),
             {
                 "schema-version": "1.0",
-                "build": {"name": "opensearch-dashboards", "version": "1.2.3"},
-                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2"}},
+                "build": {"name": "OpenSearch Dashboards", "version": "1.2.3"},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2", }},
+            },
+        )
+
+    def test_create_manifest_opensearch_dashboards_from_default(self) -> None:
+        input_manifests = InputManifests("OpenSearch Dashboards")
+        input_manifest = input_manifests.create_manifest("4.2.3", [])
+        self.assertEqual(
+            input_manifest.to_dict(),
+            {
+                "schema-version": "1.0",
+                "build": {"name": "OpenSearch Dashboards", "version": "4.2.3"},
+                "ci": {"image": {"name": "opensearchstaging/ci-runner:ci-runner-centos7-opensearch-dashboards-build-v2", }},
             },
         )
 

@@ -65,6 +65,30 @@ pipeline {
                 }
             }
         }
+        stage('Get Repository Commits') {
+            agent {
+                docker {
+                    label AGENT_X64
+                    image dockerAgent.image
+                    alwaysPull true
+                }
+            }
+            steps {
+                script {
+                    getRepositoryCommit(
+                        componentName: "${COMPONENT_NAME}",
+                        inputManifest: "manifests/${INPUT_MANIFEST}",
+                        outputFile: "commits.yml"
+                    )
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'commits.yml'
+                    postCleanup()
+                }
+            }
+        }
         stage('build') {
             parallel {
                 stage('build-snapshot-x64-tar') {
@@ -128,6 +152,36 @@ pipeline {
                                 snapshot: true
                             )
                             echo("Uploading min snapshots to S3")
+                            uploadMinSnapshotsToS3(
+                                fileActions: [createSha512Checksums()],
+                                distribution: 'tar'
+                            )
+                        }
+                    }
+                    post {
+                        always {
+                            postCleanup()
+                        }
+                    }
+                }
+                stage('build-snapshot-macos-x64-tar') {
+                    agent {
+                        node {
+                            label 'Jenkins-Agent-MacOS12-X64-Mac1Metal-Multi-Host'
+                        }
+                    }
+                    tools {
+                        jdk dockerAgent.javaVersion
+                    }
+                    steps {
+                        script {
+                            buildManifest(
+                                componentName: "${COMPONENT_NAME}",
+                                inputManifest: "manifests/${INPUT_MANIFEST}",
+                                distribution: 'tar',
+                                snapshot: true
+                            )
+                            echo("Uploading darwin min snapshots to S3")
                             uploadMinSnapshotsToS3(
                                 fileActions: [createSha512Checksums()],
                                 distribution: 'tar'
